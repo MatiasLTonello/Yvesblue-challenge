@@ -1,7 +1,7 @@
 "use client";
 
 import DATA from "@/data.json";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export interface ImpactAssessmentData {
   "Company Name": string;
@@ -16,6 +16,19 @@ export interface ImpactAssessmentData {
   "CO2 Scope 3 Revenue Adjusted": number | string;
 }
 
+const FILTERED_DATA: Map<
+  ImpactAssessmentData["Company Name"],
+  ImpactAssessmentData
+> = new Map();
+
+for (const row of DATA) {
+  FILTERED_DATA.set(row["Company Name"], row);
+}
+
+const SANITIZED_DATA: ImpactAssessmentData[] = Array.from(
+  FILTERED_DATA.values()
+);
+
 export default function Home() {
   const [sort, setSort] = useState<keyof ImpactAssessmentData>("Company Name");
   const matches = useMemo(() => {
@@ -24,7 +37,7 @@ export default function Home() {
       const aValue = Number(String(a[sort]).replace(numberRegex, ""));
       const bValue = Number(String(b[sort]).replace(numberRegex, ""));
 
-      if (!Number.isNaN(aValue) || !Number.isNaN(bValue)) {
+      if (!Number.isNaN(aValue) && !Number.isNaN(bValue)) {
         return bValue - aValue;
       }
       return (a[sort] as string).localeCompare(b[sort] as string);
@@ -44,21 +57,21 @@ export default function Home() {
           </tr>
           <tr>
             <th
-              className={sort === "Company Name" ? "font-bold" : "font:normal"}
+              className={sort === "Company Name" ? "font-bold" : "font-normal"}
               onClick={() => setSort("Company Name")}
             >
               {" "}
               Company Name{" "}
             </th>
             <th
-              className={sort === "Total Revenue" ? "font-bold" : "font:normal"}
+              className={sort === "Total Revenue" ? "font-bold" : "font-normal"}
               onClick={() => setSort("Total Revenue")}
             >
               Total Compane Revenue
             </th>
             <th
               className={
-                sort === "Company Market Cap" ? "font-bold" : "font:normal"
+                sort === "Company Market Cap" ? "font-bold" : "font-normal"
               }
               onClick={() => setSort("Company Market Cap")}
             >
@@ -66,7 +79,7 @@ export default function Home() {
             </th>
             <th
               className={
-                sort === "Women Managers" ? "font-bold" : "font:normal"
+                sort === "Women Managers" ? "font-bold" : "font-normal"
               }
               onClick={() => setSort("Women Managers")}
             >
@@ -74,7 +87,7 @@ export default function Home() {
             </th>
             <th
               className={
-                sort === "Women Employees" ? "font-bold" : "font:normal"
+                sort === "Women Employees" ? "font-bold" : "font-normal"
               }
               onClick={() => setSort("Women Employees")}
             >
@@ -84,7 +97,7 @@ export default function Home() {
               className={
                 sort === "CO2 Scope 1 & 2 Adjusted"
                   ? "font-bold"
-                  : "font:normal"
+                  : "font-normal"
               }
               onClick={() => setSort("CO2 Scope 1 & 2 Adjusted")}
             >
@@ -94,7 +107,7 @@ export default function Home() {
               className={
                 sort === "CO2 Scope 1 & 2 Revenue Adjusted"
                   ? "font-bold"
-                  : "font:normal"
+                  : "font-normal"
               }
               onClick={() => setSort("CO2 Scope 1 & 2 Revenue Adjusted")}
             >
@@ -102,7 +115,7 @@ export default function Home() {
             </th>
             <th
               className={
-                sort === "CO2 Scope 3 Adjusted" ? "font-bold" : "font:normal"
+                sort === "CO2 Scope 3 Adjusted" ? "font-bold" : "font-normal"
               }
               onClick={() => setSort("CO2 Scope 3 Adjusted")}
             >
@@ -112,14 +125,14 @@ export default function Home() {
               className={
                 sort === "CO2 Scope 3 Revenue Adjusted"
                   ? "font-bold"
-                  : "font:normal"
+                  : "font-normal"
               }
               onClick={() => setSort("CO2 Scope 3 Revenue Adjusted")}
             >
               Rev Adjusted
             </th>
             <th
-              className={sort === "ESG Score" ? "font-bold" : "font:normal"}
+              className={sort === "ESG Score" ? "font-bold" : "font-normal"}
               onClick={() => setSort("ESG Score")}
             >
               ESG Score
@@ -127,7 +140,7 @@ export default function Home() {
           </tr>
         </thead>
         <tbody>
-          {matches.map((row, index) => (
+          {SANITIZED_DATA.map((row, index) => (
             <tr key={index}>
               <td>{row["Company Name"]}</td>
               <td>{row["Total Revenue"]}</td>
