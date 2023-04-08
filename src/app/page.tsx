@@ -19,7 +19,16 @@ export interface ImpactAssessmentData {
 export default function Home() {
   const [sort, setSort] = useState<keyof ImpactAssessmentData>("Company Name");
   const matches = useMemo(() => {
-    return [...DATA].sort((a, b) => (a[sort] > b[sort] ? 1 : -1));
+    const numberRegex = new RegExp(/[\$(\)\,.]/g, "ig");
+    return [...DATA].sort((a, b) => {
+      const aValue = Number(String(a[sort]).replace(numberRegex, ""));
+      const bValue = Number(String(b[sort]).replace(numberRegex, ""));
+
+      if (!Number.isNaN(aValue) || !Number.isNaN(bValue)) {
+        return bValue - aValue;
+      }
+      return (a[sort] as string).localeCompare(b[sort] as string);
+    });
   }, [sort]);
 
   return (
@@ -34,24 +43,87 @@ export default function Home() {
             <th colSpan={2}>CO2 SCOPE 3</th>
           </tr>
           <tr>
-            <th onClick={() => setSort("Company Name")}> Company Name </th>
-            <th onClick={() => setSort("Total Revenue")}>
+            <th
+              className={sort === "Company Name" ? "font-bold" : "font:normal"}
+              onClick={() => setSort("Company Name")}
+            >
+              {" "}
+              Company Name{" "}
+            </th>
+            <th
+              className={sort === "Total Revenue" ? "font-bold" : "font:normal"}
+              onClick={() => setSort("Total Revenue")}
+            >
               Total Compane Revenue
             </th>
-            <th onClick={() => setSort("Company Market Cap")}>
+            <th
+              className={
+                sort === "Company Market Cap" ? "font-bold" : "font:normal"
+              }
+              onClick={() => setSort("Company Market Cap")}
+            >
               Market Capilazition
             </th>
-            <th onClick={() => setSort("Women Managers")}>Managers</th>
-            <th onClick={() => setSort("Women Employees")}>Employees</th>
-            <th onClick={() => setSort("CO2 Scope 1 & 2 Adjusted")}>Total</th>
-            <th onClick={() => setSort("CO2 Scope 1 & 2 Revenue Adjusted")}>
+            <th
+              className={
+                sort === "Women Managers" ? "font-bold" : "font:normal"
+              }
+              onClick={() => setSort("Women Managers")}
+            >
+              Managers
+            </th>
+            <th
+              className={
+                sort === "Women Employees" ? "font-bold" : "font:normal"
+              }
+              onClick={() => setSort("Women Employees")}
+            >
+              Employees
+            </th>
+            <th
+              className={
+                sort === "CO2 Scope 1 & 2 Adjusted"
+                  ? "font-bold"
+                  : "font:normal"
+              }
+              onClick={() => setSort("CO2 Scope 1 & 2 Adjusted")}
+            >
+              Total
+            </th>
+            <th
+              className={
+                sort === "CO2 Scope 1 & 2 Revenue Adjusted"
+                  ? "font-bold"
+                  : "font:normal"
+              }
+              onClick={() => setSort("CO2 Scope 1 & 2 Revenue Adjusted")}
+            >
               Rev Adjusted
             </th>
-            <th onClick={() => setSort("CO2 Scope 3 Adjusted")}>Total</th>
-            <th onClick={() => setSort("CO2 Scope 3 Revenue Adjusted")}>
+            <th
+              className={
+                sort === "CO2 Scope 3 Adjusted" ? "font-bold" : "font:normal"
+              }
+              onClick={() => setSort("CO2 Scope 3 Adjusted")}
+            >
+              Total
+            </th>
+            <th
+              className={
+                sort === "CO2 Scope 3 Revenue Adjusted"
+                  ? "font-bold"
+                  : "font:normal"
+              }
+              onClick={() => setSort("CO2 Scope 3 Revenue Adjusted")}
+            >
               Rev Adjusted
             </th>
-            <th onClick={() => setSort("ESG Score")}>ESG Score</th>
+            <th
+              className={sort === "ESG Score" ? "font-bold" : "font:normal"}
+              onClick={() => setSort("ESG Score")}
+            >
+              ESG Score
+            </th>
           </tr>
         </thead>
         <tbody>
