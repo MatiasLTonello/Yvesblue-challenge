@@ -33,7 +33,7 @@ export default function Home() {
   const [sort, setSort] = useState<keyof ImpactAssessmentData>("Company Name");
   const matches = useMemo(() => {
     const numberRegex = new RegExp(/[\$(\)\,.]/g, "ig");
-    return [...DATA].sort((a, b) => {
+    return [...SANITIZED_DATA].sort((a, b) => {
       const aValue = Number(String(a[sort]).replace(numberRegex, ""));
       const bValue = Number(String(b[sort]).replace(numberRegex, ""));
 
@@ -140,7 +140,7 @@ export default function Home() {
           </tr>
         </thead>
         <tbody>
-          {SANITIZED_DATA.map((row, index) => (
+          {matches.map((row, index) => (
             <tr key={index}>
               <td>{row["Company Name"]}</td>
               <td>{row["Total Revenue"]}</td>
@@ -151,7 +151,19 @@ export default function Home() {
               <td>{row["CO2 Scope 1 & 2 Revenue Adjusted"]}</td>
               <td>{row["CO2 Scope 3 Adjusted"]}</td>
               <td>{row["CO2 Scope 3 Revenue Adjusted"]}</td>
-              <td>{row["ESG Score"]}</td>
+              <td className="flex gap-1 items-center justify-start">
+                <div style={{ width: 50 }}>
+                  {Math.round(row["ESG Score"] * 100) / 100}{" "}
+                </div>
+                <div
+                  style={{
+                    opacity: 0.2 + (1 - Math.round(row["ESG Score"]) / 100),
+                    backgroundColor: "#2f2fd8",
+                    height: 30,
+                    width: `${Math.round(row["ESG Score"])}%`,
+                  }}
+                />
+              </td>
             </tr>
           ))}
         </tbody>
